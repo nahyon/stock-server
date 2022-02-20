@@ -1,0 +1,58 @@
+paths:
+  /intraday:
+    post:
+      summary: 시간/분 데이터 추가
+      tags:
+        - 시간/분 데이터
+      produces:
+        - application/json
+      schema:
+        $ref: "#/components/schemas/SampleReq"
+      responses:
+        201:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SampleRes"
+              example:
+                anyString: "스트링"
+                anyNumber: 100000.001
+        400:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /intraday/{symbol}:
+    get:
+      summary: 시간/분 데이터 조회
+      tags:
+        - 시간/분 데이터
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: symbol
+          required: true
+          description: Company Symbol
+          example: aapl
+          schema:
+            $ref: "#/components/schemas/SampleReq"
+
+      responses:
+        201:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SampleRes"
+              example:
+                symbol: "aapl"
+        400:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"

@@ -1,0 +1,7 @@
+components:
+  schemas:
+    SampleReq:
+      properties:
+        symbol:
+          type: string
+          description: stock symbol
