@@ -1,73 +1,133 @@
 const router = require("express").Router();
 const db = require("../app.js");
-const crawling = require("./crawling");
 const axios = require("axios");
-const delayFunc = require("./delayFuncs");
 const API_KEY = process.env.ALPHAVANTAGEAPI;
 
-router.post("/", function (req, res) {
-  // cron.schedule("0 * * * *", symbolCreator)
-  async function getSymbol() {
-    let count = 100;
-    let symbol;
-    var data = await crawling.crawlSymbol();
-    // data2 = fs.readFileSync("./symbol.json")
-    // parsedData = JSON.stringify(parsedData)
-    for (var key in data) {
-      //console.log(data);
-      url = new Array();
-      //   console.log(data[key].title);
-      symbol = data[key].symbol;
-      url[
-        key
-      ] = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=compact&apikey=${API_KEY}`;
 
-      //   console.log(url[key]);
-      await delayFunc.sleep(12050).then(() =>
-        axios({
-          method: "get",
-          url: url[key],
-        })
-          .then((res) => {
-            //   console.log(res.data);
-            var res2 = res.data;
-            var content = res2["Time Series (Daily)"];
+const symbols = ['AAPL', 'MSFT', 'GOOG', 'GOOGL', 'AMZN']// 'TSLA', 'FB', 'NVDA', 'TSM', 'JPM']//, 'V', 'JNJ', 'UNH', 'HD', 'WMT', 'BAC', 'PG', 'BABA'];
 
-            if (content) {
-              const keys = Object.keys(content);
-              // console.log(keys)
+function delay() {
+	return new Promise(resolve => setTimeout(resolve, 12050));//12050)); //12초이상 (5call/분)
+}
 
-              const sql = `insert IGNORE into daily(symbol, timestamp, open, high,low,close,volume) values (?)`;
-              count -= 1;
-              console.log(
-                symbol + " inserted into database : " + count + " symbols left"
-              );
+//(TIME_SERIES_DAILY)-----------------------------------------------------------------------------------------------------------------
+async function callAPI(symbol) {
+	try {
+    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=compact&apikey=${API_KEY}` ;
+		const response = await axios.get(url);   
+    //console.log(response.data);
+    const res = response.data;
+    const content = res["Time Series (Daily)"];
+    
+    let count = 5; 
+    if (content) {
+      const keys = Object.keys(content);
+      // console.log(keys)
 
-              // extract and insert data from API into mysql DB
-              keys.forEach(function (key, index) {
-                const row = content[key];
-                const date = keys[index];
-                const open = parseFloat(row["1. open"]);
-                const high = parseFloat(row["2. high"]);
-                const low = parseFloat(row["3. low"]);
-                const close = parseFloat(row["4. close"]);
-                const volume = parseInt(row["5. volume"]);
-                const array = [symbol, date, open, high, low, close, volume];
-                db.query(sql, [array], function (err, rows, fields) {});
-              });
-            }
-          })
-          .catch(() => {
-            console.log("rejected");
-          })
+      const sql = `insert IGNORE into daily(symbol, timestamp, open, high,low,close,volume) values (?)`;
+      count -= 1;
+      console.log(
+        symbol + " inserted into database : " + count + " symbols left"
       );
-    }
-  }
-  getSymbol().then(() => {
-    console.log("-----all the pieces of data are inserted!-----");
-  });
-});
 
+      // extract and insert data from API into mysql DB
+      keys.forEach(function (key, index) {
+        const row = content[key];
+        const date = keys[index];
+        const open = parseFloat(row["1. open"]);
+        const high = parseFloat(row["2. high"]);
+        const low = parseFloat(row["3. low"]);
+        const close = parseFloat(row["4. close"]);
+        const volume = parseInt(row["5. volume"]);
+        const array = [symbol, date, open, high, low, close, volume];
+        db.query(sql, [array], function (err, rows, fields) {});
+      });
+    }
+    
+	} catch (error) {
+		console.log(error);
+	}
+}
+async function delayedLog(symbol) {
+	await delay();
+	await callAPI(symbol);
+	//console.log(symbol);
+}
+async function processArray(symbols) {
+	for (const symbol of symbols) {
+		await delayedLog(symbol);
+	}
+	console.log('Done!');
+}
+
+//---------------------------------------------[POST]all symbols----------------------------
+router.post("/", function (req, res) {
+  processArray(symbols);
+})
+
+//(GLOBAL_QUOTE)매일-----------------------------------------------------------------------------------------------------------------
+async function callAPI2(symbol) {
+	try {
+    const url =  `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}` ;
+		const response = await axios.get(url);   
+    //console.log(response.data);
+    const res = response.data;
+    const content = res["Global Quote"];
+    
+    let count = 5; 
+    const sy = content["01. symbol"];
+    const open = content["02. open"];
+    const high = content["03. high"];
+    const low = content["04. low"];
+    const close = content["08. previous close"];  //["05. price"]
+    const volume = content["06. volume"];
+    const ltd = content["07. latest trading day"];
+    const change = content["09. change"];
+    const changePercent = content["10. change percent"];
+    if (sy) {
+      const sql = `insert IGNORE into daily(symbol, timestamp, open, high, low, close, volume, change_value, change_percent) values (?)`;
+      count -= 1;
+      console.log(
+        symbol + " inserted into database : " + count + " symbols left"
+      );
+      const array = [
+        sy,
+        ltd,
+        open,
+        high,
+        low,
+        close,
+        volume,
+        change,
+        changePercent,
+      ];
+      //console.log(array);
+      db.query(sql, [array], function (err, rows, fields) {});
+    }
+    
+	} catch (error) {
+		console.log(error);
+	}
+}
+async function delayedLog2(symbol) {
+	await delay();
+	await callAPI2(symbol);
+	//console.log(symbol);
+}
+async function processArray2(symbols) {
+	for (const symbol of symbols) {
+		await delayedLog2(symbol);
+	}
+	console.log('Done!');
+}
+
+//---------------------------------------------[POST]today----------------------------
+router.post("/today", function (req, res) {
+  processArray2(symbols);
+})
+
+
+//-------------------------------------------------------------------------------------------------------------------//
 router.get("/full-data/:symbol", function (req, res) {
   const symbol = req.params.symbol;
   const sql = `SELECT * from daily where symbol = ?`;

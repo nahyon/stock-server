@@ -1,6 +1,6 @@
 const fs = require("fs");
 const router = require("express").Router();
-const crawling = require("./crawling");
+//const crawling = require("./crawling");
 const path = require("path");
 
 router.get("/", function (req, res, next) {

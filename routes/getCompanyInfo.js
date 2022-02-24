@@ -1,59 +1,61 @@
 const router = require("express").Router();
 const db = require("../app.js");
-const crawling = require("./crawling");
+//const crawling = require("./crawling");
 const axios = require("axios");
-const delayFunc = require("./delayFuncs");
+//const delayFunc = require("./delayFunc");
 const API_KEY = process.env.ALPHAVANTAGEAPI;
 
-router.post("/", function (req, res) {
-  // cron.schedule("0 * * * *", symbolCreator)
-  async function getSymbol() {
-    let symbol;
-    let count = 100;
-    const data = await crawling.crawlSymbol();
-    // data2 = fs.readFileSync("./symbol.json")
-    // parsedData = JSON.stringify(parsedData)
-    for (var key in data) {
-      //console.log(data);
-      url = new Array();
-      //   console.log(data[key].title);
-      symbol = data[key].symbol;
-      url[
-        key
-      ] = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${API_KEY}`;
-      //   console.log(url[key]);
-      await delayFunc.sleep(12050).then(() =>
-        axios({
-          method: "get",
-          url: url[key],
-        })
-          .then((res) => {
-            //   console.log(res.data);
-            let res2 = res.data;
-            const description = res2["Description"];
-            const marketCap = res2["MarketCapitalization"];
-            const name = res2["Name"];
-            if (marketCap) {
-              const sql = `insert IGNORE into company_info(symbol, name, description, cap) values (?)`;
-              count -= 1;
-              console.log(
-                symbol + " inserted into database : " + count + " symbols left"
-              );
+const symbols = ['AAPL', 'MSFT', 'GOOG', 'GOOGL', 'AMZN']// 'TSLA', 'FB', 'NVDA', 'TSM', 'JPM']//, 'V', 'JNJ', 'UNH', 'HD', 'WMT', 'BAC', 'PG', 'BABA'];
 
-              const array = [symbol, name, description, marketCap];
-              db.query(sql, [array], function (err, rows, fields) {});
-            }
-          })
-          .catch(() => {
-            console.log("rejected");
-          })
+async function callAPI(symbol) {
+	try {
+    const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${API_KEY}` ;
+		const response = await axios.get(url);   
+    //console.log(response.data);
+    const res = response.data;
+
+    let count = 5;
+    const description = res["Description"];
+    const marketCap = res["MarketCapitalization"];
+    const name = res["Name"];
+    //console.log(description, marketCap, name);
+
+    if (marketCap) {
+      const sql = `insert IGNORE into company_info(symbol, name, description, cap) values (?)`;
+      count -= 1;
+      console.log(
+        symbol + " inserted into database : " + count + " symbols left"
       );
+
+      const array = [symbol, name, description, marketCap];
+      db.query(sql, [array], function (err, rows, fields) {});
     }
-  }
-  getSymbol().then(() => {
-    console.log("-----all the pieces of data are inserted!-----");
-  });
-});
+    
+	} catch (error) {
+		console.log(error);
+	}
+}
+function delay() {
+	return new Promise(resolve => setTimeout(resolve, 12050));//12050)); //12초이상 (5call/분)
+}
+async function delayedLog(symbol) {
+	await delay();
+	await callAPI(symbol);
+	//console.log(symbol);
+}
+async function processArray(symbols) {
+	for (const symbol of symbols) {
+		await delayedLog(symbol);
+	}
+	console.log('Done!');
+}
+
+
+//---------------------------------------------[POST]----------------------------
+router.post("/", function (req, res) {
+  processArray(symbols);
+})
+
 
 //모든 회사 
 router.get("/all", function (req, res) {

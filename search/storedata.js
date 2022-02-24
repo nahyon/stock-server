@@ -77,6 +77,7 @@ router.post("/store", function (req, res) {
   storedata();
 });
 
+//keyword로 search
 async function searchdata(endpoint) {
   try {
     // Initialize the client
