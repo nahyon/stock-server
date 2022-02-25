@@ -23,3 +23,5 @@ symbol, name, kr_name, description, kr_desc, imgurl
 **kr_name, kr_desc UPDATE (다함께 작업중) -- 3 파일에 SQL문 추가하기
 
 **imgurl 추가 -- 2 파일에 SQL문 변경하기
+
+**cap 삭제 -- 2파일에 SQL문 변경하기
