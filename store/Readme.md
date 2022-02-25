@@ -21,10 +21,7 @@ symbol, name, kr_name, description, kr_desc, imgurl
 
 *기존의 marketcap은 daily 테이블로 가서 일별로 데이터 들어갈 것임
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 7342452d3c20d4a39386486dd2138f11e80e3777
 ## insertdata.js:
 daily테이블, intraday테이블에 insert하는 코드 (companyinfo테이블이 다 완성되어있어야지 사용가능 - companyinfo테이블에서 종목들을 가져오기 때문)
 
