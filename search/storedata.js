@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const db = require("../app.js");
 
 dotenv.config();
-
+//알고리아, 서버 데이터 유지 아이콘. . 이미지url.. 서버는 바뀌었는데 알고리아는 안바뀌는 일 일어나지않게 
 // Algolia client credentials
 const ALGOLIA_APP_ID = process.env.ALGOLIA_APP_ID;
 const ALGOLIA_API_KEY = process.env.ALGOLIA_API_KEY;
