@@ -12,11 +12,10 @@ with open('data500.json') as json_file:
     for item in json_data: 
     # 문자열
     # key가 json_string인 문자열 가져오기
-        if item["number"] >= 376 :
-            json_string = item["symbol"]
-            #print(json_string)
-            idx+=1
-            symbol.append(json_string)
+        json_string = item["symbol"]
+        #print(json_string)
+        idx+=1
+        symbol.append(json_string)
 
 print(symbol)
 print('총 :', idx)
