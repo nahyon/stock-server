@@ -71,8 +71,9 @@ const getCompanyInfo = require("./routes/getCompanyInfo");
 //store 
 const storecompany = require("./store/insertcompany");
 const storedata = require("./store/insertdata");
+const storesearchdata = require("./store/searchdata");
 //search
-const searchdata = require("./search/storedata"); //algolia
+const searchdata = require("./search/searchdata"); //algolia
 
 
 
@@ -82,6 +83,7 @@ app.use("/company-info", getCompanyInfo);
 //app.use("/auth", kakaoAuth);
 app.use("/companystore", storecompany);
 app.use("/store", storedata);
+app.use("/searchstore", storesearchdata); //insert to algolia
 app.use("/search", searchdata); //algolia
 
 

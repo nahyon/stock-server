@@ -79,13 +79,11 @@ async function dailyapi(symbol, url) {
       });
     }
 
-    // -- 추가 필요 change, changePercent -- //
+    // -- 추가 필요 change_value, change_percent, marketCap 계산-- //
     //오늘의 change = (오늘 close) - (전날 close) 
     //오늘의 changePercent = (오늘의 change) / (전날 close)
-    //sql = `insert into daily(change, changePercent) values (?)`;
-
-    // -- 추가 필요 marketCap -- //
-    //marketCap도 회사정보가 아닌 daily테이블에 넣는다->  function = OVERVIEW인 api호출해서 추가해야함
+    //
+    //sql = `insert into daily(change_value, change_percent, marketcap) values (?)`;
 
     
 	} catch (error) {

@@ -15,9 +15,12 @@ router.get("/all", function (req, res) {
 
 router.get("/:symbol", function (req, res) {
   const symbol = req.params.symbol;
-  const sql = `SELECT * from company_info where symbol = ?`;
+  const sql = `SELECT img from company_info where symbol = ?`;
   db.query(sql, symbol, function (err, rows, fields) {
-    res.json(rows);
+    //res.json(rows);
+    res.type('png') ;
+    console.log(Buffer.from({rows}, "utf8").toString('base64'))
+    res.send(rows)
   });
 });
 
