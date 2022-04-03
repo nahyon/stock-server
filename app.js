@@ -73,7 +73,7 @@ const storecompany = require("./store/insertcompany");
 const storedata = require("./store/insertdata");
 const storesearchdata = require("./store/searchdata");
 //search
-const searchdata = require("./search/searchdata"); //algolia
+const searchdata = require("./search/searchdata2"); //algolia //////test!!!!!!!!! searchdata2로 바꿔둠! (이미지 테스트)
 
 
 
