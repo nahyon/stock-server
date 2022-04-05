@@ -72,8 +72,9 @@ const getCompanyInfo = require("./routes/getCompanyInfo");
 const storecompany = require("./store/insertcompany");
 const storedata = require("./store/insertdata");
 const storesearchdata = require("./store/searchdata");
+const storelogoimg = require("./store/insertimg"); //logo img
 //search
-const searchdata = require("./search/searchdata2"); //algolia //////test!!!!!!!!! searchdata2로 바꿔둠! (이미지 테스트)
+const searchdata = require("./search/searchdata"); //algolia 
 
 
 
@@ -84,6 +85,7 @@ app.use("/company-info", getCompanyInfo);
 app.use("/companystore", storecompany);
 app.use("/store", storedata);
 app.use("/searchstore", storesearchdata); //insert to algolia
+app.use("/imgstore", storelogoimg); //insert logoimg to companyinfo table
 app.use("/search", searchdata); //algolia
 
 

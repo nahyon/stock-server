@@ -13,10 +13,10 @@ const ALGOLIA_INDEX_NAME = process.env.ALGOLIA_INDEX_NAME;
 
 /* search 기능
   1. symbol
-  2. 한글 (- 초성도 가능하게)
+  2. 한글 (- 초성도 가능하게? )- 안해
   3. 영어
 
-  반환하는 것 : {symbol, name_kr, name_en, img_url}
+  반환하는 것 : {symbol, name_kr, name_en, img}
 */
 
 
@@ -80,7 +80,7 @@ router.get("/:method/:keyword", function (req, res) {
   const method = req.params.method;
   const keyword = req.params.keyword;
   let symbols = [];
-  let sql = "SELECT symbol, name, kr_name, objectID FROM company_info where symbol in("; //objectID 대신 img로 바꾸기!
+  let sql = "SELECT symbol, name, kr_name, objectID, img FROM company_info where symbol in("; //objectID 대신 img로 바꾸기! //img추가(0406)
   searchdata(keyword, method).then((result) => {
     //res.json(result); //알고리아 검색결과
     if (! result.length) {
