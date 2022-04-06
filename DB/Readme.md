@@ -10,18 +10,25 @@
 ## [daily테이블]
 symbol, timestamp, open, high, low, close, volume, change_percent, change_value, marketcap
 
-**change_percent, change_value, marketcap 추가 -- 1 파일에 SQL문 변경하기
-
+symbol, date, open, high, low, close, volume, change_percent, change_value, cap
+** 컬럼명 변경 timestamp-> date , marketcap -> cap -- 1파일 
 
 ## [intraday테이블]
 symbol, timestamp, open, high, low, close, volume
 
+symbol, datetime, open, high, low, close, volume
+** 컬럼명 변경 timestamp -> datetime --1파일
+
 
 ## [companyinfo 테이블] 
 symbol, name, kr_name, description, kr_desc, imgurl
+symbol, name_en, name_kr, desc_kr , desc_en , img (TEXT타입), shareout, updatedAt_daily, updatedAt_intraday cap제거 
 
-**kr_name, kr_desc UPDATE (다함께 작업중) -- 3 파일에 SQL문 추가하기
+-- 1 파일
+** 컬럼명 변경 (name, kr_name) -> (name_en, name_kr) , (description, kr_desc) -> (desc_kr, desc_en) ,
+** 컬럼 추가 img(TEXT) , shareout, updatedAt_daily(DATE), updatedAt_intraday(DATETIME)
+** 컬럼 제거 cap 
+**name_kr, desc_kr UPDATE -- 2 파일에 SQL문
 
-**imgurl 추가 -- 2 파일에 SQL문 변경하기
-
-**cap 삭제 -- 2파일에 SQL문 변경하기
+0406 전달사항
+[companyinfo] - shareout추가 필요 , {imgurl -> img} 컬럼명 변경
